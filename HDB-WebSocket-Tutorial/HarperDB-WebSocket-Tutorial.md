@@ -2,7 +2,7 @@
 
 > WebSocket is a computer communications protocol, providing full-duplex communication channels over a single TCP connection. [Wikipedia](https://en.wikipedia.org/wiki/WebSocket)
 
-TCP stands for transmission control protocol. It is a _reliable_ protocol; thus, it assures that the data being transmitted will be sent in its entirety (a.k.a. lossless). There are many different higher-level protocols based on TCP, each serving the general purpose of transmitting data from one point to another. Many developers are familiar with the high-level protocol, HTTP, the main communication protocol of the internet. WebSocket operates similar to HTTP, but has its own variety of differences.
+TCP stands for transmission control protocol. It is a _reliable_ protocol; thus, it assures that the data being transmitted will be sent in its entirety (a.k.a. lossless). There are many different higher-level protocols based on TCP, each serving the general purpose of transmitting data from one point to another. HTTP, the main communication protocol of the internet, is an example of a high-level protocal many developers are familiar with. WebSocket operates similar to HTTP, but has its own variety of differences.
 
 One of WebSocket's main principles is the **full-duplex** communiction channels. These channels allow for simultaneous, bi-directional data transfer between the two peers. This means that at any time the systems at either end of a WebSocket connection can recieve or send data.
 
@@ -16,9 +16,9 @@ Consider a chat application scenario:
 
 All four clients need to be kept in sync. When _John_ **sends** a message, _Chris_, _Sam_, and _Jane_, should all **receive** it as quickly as possible. If this app is using HTTP, the **send** operation is simple, use a POST request to the server with the message. But the **receive** operation is a bit harder. Client's need to simultaneously be **polling** the server for new messages. Depending on the polling interval and the number of connected clients, the server could be looking at an alarming number of requests to handle.
 
-With WebSockets, the flow is simplified significantly. All clients establish a connection with the server and begin **subscribe** to a certain **channel**. Any client (or the server) can **publish** a message to the specified **channel** at any time. When it does so, the server will then process the **publish** event, and depending on the implementation, will **broadcast** the new message to all client connections on the **channel**. This pattern is often dubbed as the _pub/sub model_. And is used by a plethora of applications, including [HarperDB clustering](https://harperdb.io/developers/documentation/clustering/)!
+With WebSockets, the flow is simplified significantly. All clients establish a connection with the server and begin **subscribe** to a certain **channel**. Any client (or the server) can **publish** a message to the specified **channel** at any time. When it does so, the server will then process the **publish** event, and depending on the implementation, will **broadcast** the new message to all client connections on the **channel**. This pattern is often dubbed as the _pub/sub model_. And is used by a plethora of applications, including [HarperDB clustering](https://harperdb.io/developers/documentation/clustering/link/ethanarrowood/blog)!
 
-Internally, HarperDB clusters replicate data between instances using the bi-directional pub/sub model. Clients can subscribe to the same WebSocket channels HarperDB uses and access all of the updates of a given table. Using this mechanism, developers can build applications with close-to realtime data updates. To make this application development even easier, HarperDB has published a new module, [harperdb-websocket-client](https://www.npmjs.com/package/harperdb-websocket-client).
+Internally, [HarperDB](http://harperdb.io/link/ethanarrowood/blog) clusters replicate data between instances using the bi-directional pub/sub model. Clients can subscribe to the same WebSocket channels HarperDB uses and access all of the updates of a given table. Using this mechanism, developers can build applications with close-to realtime data updates. To make this application development even easier, HarperDB has published a new module, [harperdb-websocket-client](https://www.npmjs.com/package/harperdb-websocket-client).
 
 Follow along with the demo below to see it in action.
 
@@ -76,7 +76,7 @@ Create three project files:
 touch init.js data-entry.js data-display.js
 ```
 
-And finally launch HarperDB using docker
+And finally launch HarperDB using Docker
 
 ```sh
 docker-compose up
@@ -179,7 +179,7 @@ Finally, define an immediatly invoked function expression (iife) using async/awa
 })()
 ```
 
-Now, with the HarperDB docker container running, run this script with `node init.js`. The output should look something like this (but with different times and id):
+Now, with the HarperDB Docker container running, run this script with `node init.js`. The output should look something like this (but with different times and id):
 
 ```sh
 {
@@ -263,7 +263,7 @@ rl.on('line', line => {
 })
 ```
 
-The core to this demo is quite short, `hdbClient.insert('dev:animals', [{ type, name, size }])` is all you need to insert records over websockets! The client also supports `.update` and `.delete`. At this time, the websocket client cannot manage things like users, tables, or schemas.
+The core to this demo is quite short, `hdbClient.insert('dev:animals', [{ type, name, size }])` is all you need to insert records over WebSockets! The client also supports `.update` and `.delete`. At this time, the WebSocket client cannot manage things like users, tables, or schemas.
 
 Try runnig the new script with `node data-entry.js`. The following image shows what is output in my terminal interface.
 
@@ -304,7 +304,7 @@ hdbClient.subscribe('dev:animals', data => {
 
 ✨ And just like that, now _data-display_ will log every time a new record is added to the table!
 
-With the docker container and the _data-entry_ script running, open up another terminal and run `node data-display.js`.
+With the Docker container and the _data-entry_ script running, open up another terminal and run `node data-display.js`.
 
 Go back to the _data-entry_ terminal and enter a new record. You should see a new ID in the _data-display_ terminal.
 
@@ -312,7 +312,7 @@ The following screenshot shows the same output from _data-entry_ as before, but 
 
 ![A split-terminal screenshot. On the left-side: The first line is my bash profile header styled and says "➜  node-app git:(main) node data-entry.js". The second line is in purple and says "Enter new animal record, in the format <type>,<name>,<size>". The third line is purple and blue and says "Example: dog,harper,medium". The fourth line is red and white and says "> cat,garfield,large". The fifth line is yellow and says "Inserting new animal record: {"type":"cat","name":"garfield","size":"large"}". The second, third, and start of the fourth line repeat themselves one more time. On the right-side: The first line is my bash profile header styled and says "➜  node-app git:(main) node data-display.js". The second line is in white and says "New record e9923250-e316-4483-9de0-08f25204e320 inserted".](./data-display-output.png)
 
-Great work! Now entry as many records as you like and see how the WebSocket connections almost instantaneously output the new records. And for a special trick, try opening two more terminals. Run both scripts again so that you have two terminal instances for each script. Enter a record on the first _data-entry_ terminal and see it output in both _data-display_ process. Enter another record in the second _data-entry_ terminal and see it also output in both _data-display_ processes! WebSockets are pretty awesome.
+Great work! Now enter as many records as you like and see how the WebSocket connections almost instantaneously output the new records. And for a special trick, try opening two more terminals. Run both scripts again so that you have two terminal instances for each script. Enter a record on the first _data-entry_ terminal and see it output in both _data-display_ process. Enter another record in the second _data-entry_ terminal and see it also output in both _data-display_ processes! WebSockets are pretty awesome.
 
 ---
 
